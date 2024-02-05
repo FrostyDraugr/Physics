@@ -12,7 +12,7 @@ public class CelestialObject : MonoBehaviour
 
 
 
-    //Running on a scale of 1:10, increase everything by 10!
+    //Running on a scale of 1:10, decrease everything by 10!
     const float OFFSET = 0.01f;
     const double GCONST = 0.667408;
     //const double EARTH_SIZE = 5.9736;
@@ -31,12 +31,12 @@ public class CelestialObject : MonoBehaviour
     }
     private void Start()
     {
-        Time.timeScale = 10f;
+        Time.timeScale = 5f;
 
+        InitialAddForce(new Vector3(0, 0, 1), _sun.gameObject, OFFSET * boostMod, ForceMode.VelocityChange, _sun.Rigidbody.mass);
         if (_isStatic)
             return;
 
-        InitialAddForce(new Vector3(0, 0, 1), _sun.gameObject, OFFSET * boostMod, ForceMode.VelocityChange, _sun.Rigidbody.mass);
 
     }
 
@@ -47,6 +47,16 @@ public class CelestialObject : MonoBehaviour
             AddForce(cObject.transform.position, cObject.gameObject, OFFSET, ForceMode.Force, cObject.Rigidbody.mass);
         }
 
+    }
+
+    public void AddToList(CelestialObject cObject)
+    {
+        otherObjects.Add(cObject);
+    }
+
+    public void RemoveFromList(CelestialObject cObject)
+    {
+        otherObjects.Remove(cObject);
     }
 
     private void AddForce(Vector3 pos, GameObject otherObject, float mod, ForceMode forceMode, float mass)
@@ -66,7 +76,7 @@ public class CelestialObject : MonoBehaviour
 
     private double GravPull(double mass1, double mass2, double distance)
     {
-        //So things don't explode when dividing by 0...
+        //So things don't explode if dividing by 0...
         if (distance == 0)
             distance = 1;
         return (GCONST * mass1 * mass2) / (distance * distance);
