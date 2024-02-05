@@ -31,6 +31,8 @@ public class CelestialObject : MonoBehaviour
     }
     private void Start()
     {
+        Time.timeScale = 10f;
+
         if (_isStatic)
             return;
 
@@ -38,7 +40,7 @@ public class CelestialObject : MonoBehaviour
 
     }
 
-    void Update()
+    void FixedUpdate()
     {
         foreach (var cObject in otherObjects)
         {
@@ -49,12 +51,12 @@ public class CelestialObject : MonoBehaviour
 
     private void AddForce(Vector3 pos, GameObject otherObject, float mod, ForceMode forceMode, float mass)
     {
-        Rigidbody.AddForce(GravPullDir(pos) * (float)GravPull(mass, Rigidbody.mass, Vector3.Distance(otherObject.transform.position, this.gameObject.transform.position)) * mod * Time.deltaTime, forceMode);
+        Rigidbody.AddForce(GravPullDir(pos) * (float)GravPull(mass, Rigidbody.mass, Vector3.Distance(otherObject.transform.position, this.gameObject.transform.position)) * mod * Time.fixedDeltaTime, forceMode);
     }
 
     private void InitialAddForce(Vector3 pos, GameObject otherObject, float mod, ForceMode forceMode, float mass)
     {
-        Rigidbody.AddForce(pos * (float)GravPull(mass, Rigidbody.mass, Vector3.Distance(otherObject.transform.position, this.gameObject.transform.position)) * mod * Time.deltaTime, forceMode);
+        Rigidbody.AddForce(pos * (float)GravPull(mass, Rigidbody.mass, Vector3.Distance(otherObject.transform.position, this.gameObject.transform.position)) * mod * Time.fixedDeltaTime, forceMode);
     }
 
     private Vector3 GravPullDir(Vector3 pos)
