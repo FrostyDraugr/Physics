@@ -31,7 +31,7 @@ public class CelestialObject : MonoBehaviour
     }
     private void Start()
     {
-        Time.timeScale = 5f;
+        Time.timeScale = 3f;
 
         InitialAddForce(new Vector3(0, 0, 1), _sun.gameObject, OFFSET * boostMod, ForceMode.VelocityChange, _sun.Rigidbody.mass);
         if (_isStatic)
