@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UIElements;
 
 public class CelestialObject : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class CelestialObject : MonoBehaviour
     [SerializeField] CelestialObject _sun;
     [SerializeField] float boostMod;
     List<CelestialObject> otherObjects;
+    PlayerScript _player;
 
 
 
@@ -28,15 +30,36 @@ public class CelestialObject : MonoBehaviour
             if (cObject != this)
                 otherObjects.Add(cObject);
         }
+
+
     }
     private void Start()
     {
-        Time.timeScale = 3f;
+        _player = FindObjectOfType<PlayerScript>();
+        _player.AddToList(this);
 
-        InitialAddForce(new Vector3(0, 0, 1), _sun.gameObject, OFFSET * boostMod, ForceMode.VelocityChange, _sun.Rigidbody.mass);
         if (_isStatic)
             return;
+        InitialAddForce(new Vector3(0, 0, 1), _sun.gameObject, OFFSET * boostMod, ForceMode.VelocityChange, _sun.Rigidbody.mass);
 
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        Debug.Log("Success!");
+        Destroy(this);
+        if (other.gameObject.tag == "CelestialObject")
+        {
+            var go = other.gameObject.GetComponent<CelestialObject>();
+            if (go.Rigidbody.mass < this.Rigidbody.mass)
+            {
+
+            }
+        }
+    }
+
+    private void Absorb(Scale scale, float mass, GameObject Absorber, GameObject Absorbed)
+    {
 
     }
 
@@ -80,5 +103,14 @@ public class CelestialObject : MonoBehaviour
         if (distance == 0)
             distance = 1;
         return (GCONST * mass1 * mass2) / (distance * distance);
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var item in otherObjects)
+        {
+            RemoveFromList(this);
+        }
+        _player.RemoveFromList(this);
     }
 }
