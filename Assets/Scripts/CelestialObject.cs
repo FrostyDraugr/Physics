@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
+using Unity.VisualScripting;
 
 public class CelestialObject : MonoBehaviour
 {
@@ -17,7 +18,8 @@ public class CelestialObject : MonoBehaviour
     //Running on a scale of 1:10, decrease everything by 10!
     const float OFFSET = 0.01f;
     const double GCONST = 0.667408;
-    //const double EARTH_SIZE = 5.9736;
+
+    const float MASSTOSCALE = 1989209 * 2;
     //const double SUN_SIZE = EARTH_SIZE * 333000;
     //const double DISTANCE_EARTH_SUN = 14.9;
 
@@ -62,7 +64,8 @@ public class CelestialObject : MonoBehaviour
 
     private void Absorb(CelestialObject absorbed)
     {
-        this.gameObject.transform.localScale += absorbed.transform.localScale;
+        var scaleAdd = absorbed.Rigidbody.mass / MASSTOSCALE;
+        this.gameObject.transform.localScale += new Vector3(scaleAdd, scaleAdd, scaleAdd);
         this.Rigidbody.mass += absorbed.Rigidbody.mass;
         Destroy(absorbed.gameObject);
     }
@@ -73,6 +76,11 @@ public class CelestialObject : MonoBehaviour
         {
             if (cObject != this)
                 AddForce(cObject.transform.position, cObject.gameObject, OFFSET, ForceMode.Force, cObject.Rigidbody.mass);
+        }
+
+        if (Vector3.Distance(_player.transform.position, this.transform.position) > 1000)
+        {
+            Destroy(this.gameObject);
         }
 
     }

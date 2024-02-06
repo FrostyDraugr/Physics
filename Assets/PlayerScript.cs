@@ -64,7 +64,7 @@ public class PlayerScript : MonoBehaviour
 
     private Vector3 RandomVector()
     {
-        return new Vector3(Random.Range(0f, 1f), 0, Random.Range(0f, 1f)).normalized * SpawnDistance();
+        return new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized * SpawnDistance();
     }
 
     private float SpawnDistance()
