@@ -9,7 +9,7 @@ public class CelestialObject : MonoBehaviour
     [SerializeField] bool _isStatic;
     [SerializeField] CelestialObject _sun;
     [SerializeField] float boostMod;
-    List<CelestialObject> otherObjects;
+    //List<CelestialObject> otherObjects;
     PlayerScript _player;
 
 
@@ -23,13 +23,13 @@ public class CelestialObject : MonoBehaviour
 
     private void Awake()
     {
-        otherObjects = new();
-        CelestialObject[] CelestialObjects = FindObjectsOfType<CelestialObject>();
-        foreach (var cObject in CelestialObjects)
-        {
-            if (cObject != this)
-                otherObjects.Add(cObject);
-        }
+        // //otherObjects = new();
+        // CelestialObject[] CelestialObjects = FindObjectsOfType<CelestialObject>();
+        // foreach (var cObject in CelestialObjects)
+        // {
+        //     if (cObject != this)
+        //         otherObjects.Add(cObject);
+        // }
 
 
     }
@@ -46,40 +46,35 @@ public class CelestialObject : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        Debug.Log("Success!");
-        Destroy(this);
         if (other.gameObject.tag == "CelestialObject")
         {
             var go = other.gameObject.GetComponent<CelestialObject>();
-            if (go.Rigidbody.mass < this.Rigidbody.mass)
+            if (go.Rigidbody.mass > this.Rigidbody.mass)
             {
-
+                return;
+            }
+            else
+            {
+                Absorb(go);
             }
         }
     }
 
-    private void Absorb(Scale scale, float mass, GameObject Absorber, GameObject Absorbed)
+    private void Absorb(CelestialObject absorbed)
     {
-
+        this.gameObject.transform.localScale += absorbed.transform.localScale;
+        this.Rigidbody.mass += absorbed.Rigidbody.mass;
+        Destroy(absorbed.gameObject);
     }
 
     void FixedUpdate()
     {
-        foreach (var cObject in otherObjects)
+        foreach (var cObject in _player._celestialObjects)
         {
-            AddForce(cObject.transform.position, cObject.gameObject, OFFSET, ForceMode.Force, cObject.Rigidbody.mass);
+            if (cObject != this)
+                AddForce(cObject.transform.position, cObject.gameObject, OFFSET, ForceMode.Force, cObject.Rigidbody.mass);
         }
 
-    }
-
-    public void AddToList(CelestialObject cObject)
-    {
-        otherObjects.Add(cObject);
-    }
-
-    public void RemoveFromList(CelestialObject cObject)
-    {
-        otherObjects.Remove(cObject);
     }
 
     private void AddForce(Vector3 pos, GameObject otherObject, float mod, ForceMode forceMode, float mass)
@@ -99,7 +94,6 @@ public class CelestialObject : MonoBehaviour
 
     private double GravPull(double mass1, double mass2, double distance)
     {
-        //So things don't explode if dividing by 0...
         if (distance == 0)
             distance = 1;
         return (GCONST * mass1 * mass2) / (distance * distance);
@@ -107,10 +101,6 @@ public class CelestialObject : MonoBehaviour
 
     private void OnDestroy()
     {
-        foreach (var item in otherObjects)
-        {
-            RemoveFromList(this);
-        }
         _player.RemoveFromList(this);
     }
 }

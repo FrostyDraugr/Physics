@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour
 {
 
-    List<CelestialObject> _celestialObjects;
+    public List<CelestialObject> _celestialObjects;
     [SerializeField] CelestialObject _sun;
     CelestialObject _largestObject;
     [SerializeField] CelestialObject _spawnable;
@@ -48,9 +48,6 @@ public class PlayerScript : MonoBehaviour
         {
             _currentPower += Time.deltaTime;
             _currentPower = Mathf.Clamp(_currentPower, 0, _powerMax);
-
-            //Debug.Log("Power: " + _currentPower);
-            //Debug.Log("SpawnDistance: " + SpawnDistance());
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
